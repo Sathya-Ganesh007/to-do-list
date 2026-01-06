@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,30 +11,26 @@ import {
 import { Suspense } from "react";
 import Link from "next/link";
 
-async function getUser() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getClaims();
-
-  if (error || !data?.claims) {
-    redirect("/auth/login");
-  }
-
-  return data.claims as { email?: string } | null;
+interface DashboardOverviewProps {
+  user: any;
 }
 
-async function UserGreeting() {
-  const user = await getUser();
+export function UserGreeting({ user }: { user: any }) {
   const email = user?.email ?? "User";
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-3">
-        <CheckCircle2 className="h-6 w-6 text-primary" />
+    <div className="flex flex-col gap-2 mb-4">
+      <div className="flex items-center gap-4">
+        <div className="relative">
+          <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+          <CheckCircle2 className="h-8 w-8 text-primary relative z-10" />
+        </div>
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">
-            Welcome back, {email}
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+            Welcome back,{" "}
+            <span className="text-primary italic">{email.split("@")[0]}</span>
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground font-medium">
             Here's a quick overview of your productivity today.
           </p>
         </div>
@@ -45,8 +39,7 @@ async function UserGreeting() {
   );
 }
 
-async function AccountCard() {
-  const user = await getUser();
+export function AccountCard({ user }: { user: any }) {
   const email = user?.email ?? "User";
 
   return (
@@ -73,7 +66,7 @@ async function AccountCard() {
   );
 }
 
-export default function ProtectedPage() {
+export function DashboardOverview({ user }: DashboardOverviewProps) {
   return (
     <div className="flex-1 w-full flex flex-col gap-8">
       <Suspense
@@ -93,20 +86,23 @@ export default function ProtectedPage() {
           </div>
         }
       >
-        <UserGreeting />
+        <UserGreeting user={user} />
       </Suspense>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <Link href="/protected/tasks">
+        <Card className="group cursor-pointer hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 border-primary/10 bg-gradient-to-br from-card to-primary/5">
+          <Link href="/dashboard" className="block">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Tasks today</CardTitle>
-              <ListTodo className="h-4 w-4 text-muted-foreground" />
+              <ListTodo className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">8</div>
-              <p className="text-xs text-muted-foreground">
-                5 completed · 3 remaining
+              <div className="text-3xl font-bold tracking-tight">8</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                <span className="text-emerald-500 font-medium">
+                  5 completed
+                </span>{" "}
+                · 3 remaining
               </p>
             </CardContent>
           </Link>
@@ -176,9 +172,13 @@ export default function ProtectedPage() {
                 <span className="text-xs text-muted-foreground">Low</span>
               </li>
             </ul>
-            <Button asChild variant="outline" className="w-full">
-              <Link href="/protected/tasks">
-                View All Tasks
+            <Button
+              asChild
+              variant="default"
+              className="w-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
+            >
+              <Link href="/dashboard?view=tasks">
+                Go to Tasks List
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -197,7 +197,7 @@ export default function ProtectedPage() {
             </Card>
           }
         >
-          <AccountCard />
+          <AccountCard user={user} />
         </Suspense>
       </div>
     </div>

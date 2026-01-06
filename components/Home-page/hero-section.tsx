@@ -15,16 +15,17 @@ export function HeroSection() {
           <span className="text-primary"> Smart Todo Lists</span>
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-          The ultimate task management tool that helps you organize, prioritize, and accomplish your goals with ease.
+          The ultimate task management tool that helps you organize, prioritize,
+          and accomplish your goals with ease.
         </p>
         <div className="flex flex-col text-align-center sm:flex-row gap-4 justify-center">
-          <Button asChild size="lg" className="text-base pb-2">
+          <Button asChild size="lg" className="text-base">
             <Link href="/auth/sign-up">
               Get Started Free
-              <ArrowRight className="ml-2 h-4 w-4 pb-2" />
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="text-base pb-2">
+          <Button asChild size="lg" variant="outline" className="text-base">
             <Link href="#features">Learn More</Link>
           </Button>
         </div>
@@ -32,4 +33,3 @@ export function HeroSection() {
     </section>
   );
 }
-

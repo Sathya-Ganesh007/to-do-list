@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 
 export function CTA() {
@@ -13,18 +19,29 @@ export function CTA() {
               Ready to Get Started?
             </CardTitle>
             <CardDescription className="text-primary-foreground/90 text-lg">
-              Join thousands of users who are already organizing their lives with TodoList
+              Join thousands of users who are already organizing their lives
+              with TodoList
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" variant="secondary" className="text-base">
+              <Button
+                asChild
+                size="lg"
+                variant="secondary"
+                className="text-base"
+              >
                 <Link href="/auth/sign-up">
                   Start Free Trial
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="text-base border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10">
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="text-base text-white border-primary-foreground/20"
+              >
                 <Link href="#features">Learn More</Link>
               </Button>
             </div>
@@ -34,4 +51,3 @@ export function CTA() {
     </section>
   );
 }
-

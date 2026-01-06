@@ -131,9 +131,7 @@ export function SignUpForm({
           </form>
 
           <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-gray-200" />
-            </div>
+            <div className="absolute inset-0 flex items-center"></div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-white px-2 text-gray-500">
                 Or continue with
@@ -144,7 +142,7 @@ export function SignUpForm({
           <Button
             variant="outline"
             type="button"
-            className="w-full flex items-center justify-center gap-2 py-6 border-gray-200 text-gray-700 hover:bg-gray-50"
+            className="w-full flex items-center justify-center gap-2 py-6 border-gray-200 text-gray-700 "
             onClick={handleGoogleLogin}
           >
             <svg

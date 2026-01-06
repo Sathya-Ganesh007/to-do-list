@@ -3,17 +3,29 @@ import { Button } from "./ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "./auth/logout-button";
 
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+
 export async function AuthButton() {
   const supabase = await createClient();
 
-  // You can also use getUser() which will be slower.
-  const { data } = await supabase.auth.getClaims();
-
-  const user = data?.claims;
+  // getUser allows us to access user_metadata for avatar_url
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return user ? (
     <div className="flex items-center gap-4">
-      <span className="hidden sm:inline">Hey, {user.email}!</span>
+      <div className="flex items-center gap-2">
+        <Avatar>
+          <AvatarImage
+            src={user.user_metadata?.avatar_url || user.user_metadata?.picture}
+          />
+          <AvatarFallback>{user.email?.[0].toUpperCase()}</AvatarFallback>
+        </Avatar>
+      </div>
+      <Button asChild size="sm" variant="secondary">
+        <Link href="/dashboard">Dashboard</Link>
+      </Button>
       <LogoutButton />
     </div>
   ) : (
