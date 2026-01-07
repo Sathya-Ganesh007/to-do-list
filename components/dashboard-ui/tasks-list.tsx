@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import {
   Plus,
   Search,
@@ -46,7 +47,7 @@ const priorityConfig = {
   },
 };
 
-export default function TasksList() {
+export default function TasksList({ user }: { user: any }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
@@ -59,47 +60,99 @@ export default function TasksList() {
     "low" | "medium" | "high"
   >("medium");
 
-  // Load/Save
+  // Load tasks from Supabase
   useEffect(() => {
-    const saved = localStorage.getItem("tasks");
-    if (saved) {
-      setTasks(
-        JSON.parse(saved).map((t: any) => ({
-          ...t,
-          createdAt: new Date(t.createdAt),
-        }))
-      );
-    }
+    const fetchTasks = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("tasks")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (data) {
+        const mappedTasks = data.map((t: any) => ({
+          id: t.id,
+          title: t.title,
+          description: t.description || "",
+          completed: t.completed,
+          priority: t.priority,
+          createdAt: new Date(t.created_at),
+        }));
+        setTasks(mappedTasks);
+      }
+    };
+
+    fetchTasks();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-  const addTask = () => {
+  const addTask = async () => {
     if (!newTaskTitle.trim()) return;
-    const newTask: Task = {
-      id: crypto.randomUUID(),
+
+    // Optimistic update
+    const tempId = crypto.randomUUID();
+    const optimisticTask: Task = {
+      id: tempId,
       title: newTaskTitle.trim(),
       description: newTaskDescription.trim(),
       completed: false,
       priority: newTaskPriority,
       createdAt: new Date(),
     };
-    setTasks([newTask, ...tasks]);
+
+    setTasks([optimisticTask, ...tasks]);
     setNewTaskTitle("");
     setNewTaskDescription("");
     setIsAdding(false);
+
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("tasks")
+      .insert({
+        user_id: user.id || user.sub, // Handle both User object or Claims object
+        title: optimisticTask.title,
+        description: optimisticTask.description,
+        priority: optimisticTask.priority,
+        completed: false,
+      })
+      .select()
+      .single();
+
+    if (data) {
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.id === tempId
+            ? { ...t, id: data.id, createdAt: new Date(data.created_at) }
+            : t
+        )
+      );
+    } else {
+      console.error("Failed to save task:", error);
+      // Revert optimistic update if needed, or retry
+    }
   };
 
-  const toggleTask = (id: string) => {
+  const toggleTask = async (id: string) => {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+
+    // Optimistic update
     setTasks(
       tasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
     );
+
+    const supabase = createClient();
+    await supabase
+      .from("tasks")
+      .update({ completed: !task.completed })
+      .eq("id", id);
   };
 
-  const deleteTask = (id: string) => {
+  const deleteTask = async (id: string) => {
+    // Optimistic update
     setTasks(tasks.filter((t) => t.id !== id));
+
+    const supabase = createClient();
+    await supabase.from("tasks").delete().eq("id", id);
   };
 
   const filteredTasks = tasks.filter((t) => {
@@ -289,12 +342,31 @@ export default function TasksList() {
           {filteredTasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-15 animate-in fade-in duration-700">
               <div className="h-24 w-24 bg-[#121212] rounded-full flex items-center justify-center mb-8 border border-white/5 shadow-2xl">
-                <ListIcon className="h-10 w-10 text-gray-700" />
+                <Search className="h-10 w-10 text-gray-700" />
               </div>
-              <h3 className="text-2xl font-bold mb-3">No tasks found</h3>
-              <p className="text-gray-600 max-w-sm text-lg leading-relaxed">
-                Ready to be productive? Start by adding a new task!
+              <h3 className="text-2xl font-bold mb-3">
+                {searchQuery
+                  ? "No matches found"
+                  : filter !== "all"
+                  ? `No ${filter} tasks`
+                  : "No tasks found"}
+              </h3>
+              <p className="text-gray-600 max-w-sm text-lg leading-relaxed mb-6">
+                {searchQuery
+                  ? `We couldn't find any tasks matching "${searchQuery}"`
+                  : filter !== "all"
+                  ? `You don't have any ${filter} tasks yet.`
+                  : "Ready to be productive? Start by adding a new task!"}
               </p>
+              {searchQuery && (
+                <Button
+                  onClick={() => setSearchQuery("")}
+                  variant="outline"
+                  className="border-white/10 hover:bg-white/5"
+                >
+                  Clear Search
+                </Button>
+              )}
             </div>
           ) : (
             filteredTasks.map((task) => (
@@ -349,15 +421,30 @@ export default function TasksList() {
                   <Button
                     size="icon"
                     variant="ghost"
+                    onClick={() => toggleTask(task.id)}
                     className="h-10 w-10 text-gray-500 hover:text-white rounded-xl hover:bg-white/5"
+                    title={
+                      task.completed ? "Mark as active" : "Mark as completed"
+                    }
                   >
-                    <Edit2 className="h-4 w-4" />
+                    {task.completed ? (
+                      <ArrowUpCircle className="h-4 w-4" />
+                    ) : (
+                      <Check className="h-4 w-4" />
+                    )}
                   </Button>
                   <Button
                     size="icon"
                     variant="ghost"
-                    onClick={() => deleteTask(task.id)}
-                    className="h-10 w-10 text-rose-500/50 hover:text-rose-500 rounded-xl hover:bg-rose-500/10"
+                    onClick={() => {
+                      if (
+                        confirm("Are you sure you want to delete this task?")
+                      ) {
+                        deleteTask(task.id);
+                      }
+                    }}
+                    className="h-10 w-10 text-rose-500 hover:text-white hover:bg-rose-600 rounded-xl transition-colors"
+                    title="Delete task"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

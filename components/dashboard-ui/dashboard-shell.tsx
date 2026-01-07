@@ -22,7 +22,7 @@ export function DashboardShell({ user }: DashboardShellProps) {
               </div>
             }
           >
-            <TasksList />
+            <TasksList user={user} />
           </Suspense>
         </main>
       </div>

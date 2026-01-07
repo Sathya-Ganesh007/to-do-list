@@ -5,13 +5,17 @@ import TasksList from "@/components/dashboard-ui/tasks-list";
 
 async function getUser() {
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.getClaims();
+  // Check for a valid session and user
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-  if (error || !data?.claims) {
+  if (error || !user) {
     redirect("/auth/login");
   }
 
-  return data.claims;
+  return user;
 }
 
 import { Suspense } from "react";
@@ -23,12 +27,12 @@ async function DashboardContent({
   searchParams: Promise<{ view?: string }>;
 }) {
   const { view } = await searchParams;
+  const user = await getUser();
 
   if (view === "tasks") {
-    return <TasksList />;
+    // @ts-ignore - We are about to update the component to accept this prop
+    return <TasksList user={user} />;
   }
-
-  const user = await getUser();
 
   return (
     <div className="container px-4 py-10 mx-auto">
