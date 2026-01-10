@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function ResultPage() {
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get("session_id");
+  const sessionId = searchParams?.get("session_id") ?? null;
 
   return (
     <div className="min-h-screen bg-neutral-950 flex flex-col items-center justify-center p-6 text-white text-center">

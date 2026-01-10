@@ -14,18 +14,25 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'POST') {
-    const amount: number = req.body.amount;
+    const { amount, name } = req.body;
+    
+    if (!process.env.STRIPE_SECRET_KEY) {
+        console.error('STRIPE_SECRET_KEY is missing from environment variables');
+        return res.status(500).json({ statusCode: 500, message: 'Stripe configuration error' });
+    }
+
     try {
       // Create Checkout Sessions from body params.
       const params: Stripe.Checkout.SessionCreateParams = {
-        submit_type: 'donate',
+        submit_type: 'pay',
+        mode: 'payment',
         payment_method_types: ['card'],
         line_items: [
           {
             price_data: {
               currency: CURRENCY,
               product_data: {
-                name: 'Custom amount donation',
+                name: name || 'Custom amount donation',
               },
               unit_amount: formatAmountForStripe(amount, CURRENCY),
             },
@@ -40,6 +47,7 @@ export default async function handler(
 
       res.status(200).json(checkoutSession);
     } catch (err) {
+      console.log("Error creating checkout session:", err);  
       const errorMessage =
         err instanceof Error ? err.message : 'Internal server error';
       res.status(500).json({ statusCode: 500, message: errorMessage });

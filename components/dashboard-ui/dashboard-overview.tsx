@@ -8,6 +8,7 @@ import {
   CalendarDays,
   ArrowRight,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 import { Suspense } from "react";
 import Link from "next/link";
 
@@ -66,7 +67,49 @@ export function AccountCard({ user }: { user: any }) {
   );
 }
 
-export function DashboardOverview({ user }: DashboardOverviewProps) {
+export async function DashboardOverview({ user }: DashboardOverviewProps) {
+  const supabase = await createClient();
+  // Calculate start and end of "today" in local time
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const startOfWeek = new Date();
+  startOfWeek.setDate(startOfDay.getDate() - startOfDay.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  // Fetch today's tasks using a range to be safe with timezones
+  const { data: todayTasks } = await supabase
+    .from("tasks")
+    .select("*")
+    .gte("created_at", startOfDay.toISOString())
+    .lte("created_at", endOfDay.toISOString());
+
+  const totalToday = todayTasks?.length ?? 0;
+  const completedToday = todayTasks?.filter((t) => t.completed).length ?? 0;
+  const remainingToday = totalToday - completedToday;
+
+  // Fetch today's focus sessions
+  const { data: focusSessions } = await supabase
+    .from("focus_sessions")
+    .select("*")
+    .gte("created_at", startOfDay.toISOString());
+
+  const totalFocusSessions = focusSessions?.length ?? 0;
+  const totalMinutes =
+    focusSessions?.reduce((acc, s) => acc + (s.duration_minutes ?? 0), 0) ?? 0;
+  const focusHours = Math.floor(totalMinutes / 60);
+  const focusMinsRemaining = totalMinutes % 60;
+
+  // Fetch weekly completions
+  const { count: weeklyCompletions } = await supabase
+    .from("tasks")
+    .select("*", { count: "exact", head: true })
+    .eq("completed", true)
+    .gte("created_at", startOfWeek.toISOString());
+
   return (
     <div className="flex-1 w-full flex flex-col gap-8">
       <Suspense
@@ -91,18 +134,20 @@ export function DashboardOverview({ user }: DashboardOverviewProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="group cursor-pointer hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 border-primary/10 bg-gradient-to-br from-card to-primary/5">
-          <Link href="/dashboard" className="block">
+          <Link href="/dashboard?view=tasks" className="block">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Tasks today</CardTitle>
               <ListTodo className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold tracking-tight">8</div>
+              <div className="text-3xl font-bold tracking-tight">
+                {totalToday}
+              </div>
               <p className="text-xs text-muted-foreground mt-1">
                 <span className="text-emerald-500 font-medium">
-                  5 completed
+                  {completedToday} completed
                 </span>{" "}
-                · 3 remaining
+                · {remainingToday} remaining
               </p>
             </CardContent>
           </Link>
@@ -116,9 +161,9 @@ export function DashboardOverview({ user }: DashboardOverviewProps) {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            <div className="text-2xl font-bold">{totalFocusSessions}</div>
             <p className="text-xs text-muted-foreground">
-              2h 15m focused time today
+              {focusHours}h {focusMinsRemaining}m focused time today
             </p>
           </CardContent>
         </Card>
@@ -129,7 +174,7 @@ export function DashboardOverview({ user }: DashboardOverviewProps) {
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24</div>
+            <div className="text-2xl font-bold">{weeklyCompletions ?? 0}</div>
             <p className="text-xs text-muted-foreground">
               Tasks completed this week
             </p>
@@ -141,36 +186,52 @@ export function DashboardOverview({ user }: DashboardOverviewProps) {
         <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Today&apos;s tasks</CardTitle>
+              <CardTitle>Today&apos;s Focus</CardTitle>
               <p className="text-sm text-muted-foreground">
-                A sample list to show how your dashboard can look.
+                Your top-priority items for the day.
               </p>
             </div>
-            <Badge variant="secondary">Demo</Badge>
           </CardHeader>
           <CardContent>
             <ul className="space-y-3 text-sm mb-4">
-              <li className="flex items-center justify-between">
-                <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-primary" />
-                  Plan today&apos;s priorities
-                </span>
-                <span className="text-xs text-muted-foreground">High</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                  Review completed tasks
-                </span>
-                <span className="text-xs text-muted-foreground">Medium</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-amber-500" />
-                  Schedule work for tomorrow
-                </span>
-                <span className="text-xs text-muted-foreground">Low</span>
-              </li>
+              {todayTasks && todayTasks.length > 0 ? (
+                todayTasks.slice(0, 5).map((task) => (
+                  <li
+                    key={task.id}
+                    className="flex items-center justify-between"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span
+                        className={`h-2 w-2 rounded-full ${
+                          task.completed
+                            ? "bg-emerald-500"
+                            : task.priority === "high"
+                            ? "bg-rose-500"
+                            : task.priority === "medium"
+                            ? "bg-amber-500"
+                            : "bg-primary"
+                        }`}
+                      />
+                      <span
+                        className={
+                          task.completed
+                            ? "line-through text-muted-foreground"
+                            : ""
+                        }
+                      >
+                        {task.title}
+                      </span>
+                    </span>
+                    <span className="text-xs text-muted-foreground capitalize">
+                      {task.priority}
+                    </span>
+                  </li>
+                ))
+              ) : (
+                <li className="text-muted-foreground italic">
+                  No tasks for today yet.
+                </li>
+              )}
             </ul>
             <Button
               asChild
@@ -199,6 +260,7 @@ export function DashboardOverview({ user }: DashboardOverviewProps) {
         >
           <AccountCard user={user} />
         </Suspense>
+
       </div>
     </div>
   );

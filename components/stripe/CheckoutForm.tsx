@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, FormEvent } from "react";
-import getStripe from "@/lib/get-stripejs";
+
 import { fetchPostJSON } from "@/lib/api-helpers";
 
 const CheckoutForm = () => {
@@ -29,14 +29,8 @@ const CheckoutForm = () => {
       }
 
       // Redirect to Checkout.
-      const stripe = await getStripe();
-      const { error } = await (stripe as any).redirectToCheckout({
-        sessionId: checkoutSession.id,
-      });
-
-      if (error) {
-        console.warn(error.message);
-        setLoading(false);
+      if (checkoutSession.url) {
+        window.location.href = checkoutSession.url;
       }
     } catch (err) {
       console.error(err);
