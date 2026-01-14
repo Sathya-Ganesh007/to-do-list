@@ -84,6 +84,7 @@ export async function DashboardOverview({ user }: DashboardOverviewProps) {
   const { data: todayTasks } = await supabase
     .from("tasks")
     .select("*")
+    .eq("user_id", user.id)
     .gte("created_at", startOfDay.toISOString())
     .lte("created_at", endOfDay.toISOString());
 
@@ -95,6 +96,7 @@ export async function DashboardOverview({ user }: DashboardOverviewProps) {
   const { data: focusSessions } = await supabase
     .from("focus_sessions")
     .select("*")
+    .eq("user_id", user.id)
     .gte("created_at", startOfDay.toISOString());
 
   const totalFocusSessions = focusSessions?.length ?? 0;
@@ -107,6 +109,7 @@ export async function DashboardOverview({ user }: DashboardOverviewProps) {
   const { count: weeklyCompletions } = await supabase
     .from("tasks")
     .select("*", { count: "exact", head: true })
+    .eq("user_id", user.id)
     .eq("completed", true)
     .gte("created_at", startOfWeek.toISOString());
 
@@ -260,7 +263,6 @@ export async function DashboardOverview({ user }: DashboardOverviewProps) {
         >
           <AccountCard user={user} />
         </Suspense>
-
       </div>
     </div>
   );

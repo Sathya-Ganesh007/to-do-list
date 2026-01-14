@@ -23,17 +23,18 @@ export async function AuthButton() {
           <AvatarFallback>{user.email?.[0].toUpperCase()}</AvatarFallback>
         </Avatar>
       </div>
-      <Button asChild size="sm" variant="secondary">
-        <Link href="/dashboard">Dashboard</Link>
-      </Button>
       <LogoutButton />
     </div>
   ) : (
     <div className="flex gap-2">
-      <Button asChild size="sm" variant={"outline"}>
+      <Button asChild size="sm" variant="ghost" className="font-medium">
         <Link href="/auth/login">Sign in</Link>
       </Button>
-      <Button asChild size="sm" variant={"default"}>
+      <Button
+        asChild
+        size="sm"
+        className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm transition-all shadow-primary/10"
+      >
         <Link href="/auth/sign-up">Sign up</Link>
       </Button>
     </div>

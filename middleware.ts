@@ -6,9 +6,9 @@ export async function middleware(request: NextRequest) {
     request,
   });
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 
-                      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()!;
+  const supabaseKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() || 
+                      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim())!;
 
   const supabase = createServerClient(
     supabaseUrl,
@@ -37,6 +37,20 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const isAuthPage = request.nextUrl.pathname.startsWith("/auth/login") || 
+                     request.nextUrl.pathname.startsWith("/auth/sign-up");
+
+  if (user && isAuthPage) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
+    const response = NextResponse.redirect(url);
+    // Copy the refreshed cookies to the redirect response
+    supabaseResponse.cookies.getAll().forEach(cookie => {
+      response.cookies.set(cookie.name, cookie.value, cookie);
+    });
+    return response;
+  }
 
   if (
     request.nextUrl.pathname !== "/" &&

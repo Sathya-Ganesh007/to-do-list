@@ -19,7 +19,7 @@ async function getUser() {
 }
 
 import { Suspense } from "react";
-import { DashboardSkeleton } from "@/components/dashboard-ui/dashboard-skeleton";
+import { DashboardSkeleton } from "@/components/ui/skeleton";
 
 async function DashboardContent({
   searchParams,

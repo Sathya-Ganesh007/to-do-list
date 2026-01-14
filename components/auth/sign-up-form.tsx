@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Loader2, Mail, Lock, UserPlus, ArrowRight } from "lucide-react";
 
 export function SignUpForm({
   className,
@@ -74,66 +75,88 @@ export function SignUpForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Sign up</CardTitle>
-          <CardDescription className="text-center">
-            Create a new account
+      <Card className="border-border/50 bg-card/50 backdrop-blur-xl shadow-2xl">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-bold tracking-tight">
+            Create account
+          </CardTitle>
+          <CardDescription>
+            Join us today and start organizing your life
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignUp}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+          <form onSubmit={handleSignUp} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="name@example.com"
                   required
+                  className="pl-10 bg-background/50 border-border/50 focus:border-primary/50 transition-colors"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type="password"
                   required
+                  className="pl-10 bg-background/50 border-border/50 focus:border-primary/50 transition-colors"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="repeat-password">Repeat Password</Label>
-                </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="repeat-password">Repeat Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="repeat-password"
                   type="password"
                   required
+                  className="pl-10 bg-background/50 border-border/50 focus:border-primary/50 transition-colors"
                   value={repeatPassword}
                   onChange={(e) => setRepeatPassword(e.target.value)}
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button
-                type="submit"
-                className="w-full bg-[#FF4D00] hover:bg-[#E64500] text-white border-none"
-                disabled={isLoading}
-              >
-                {isLoading ? "Creating an account..." : "Sign up"}
-              </Button>
             </div>
+
+            {error && (
+              <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20">
+                <p className="text-xs font-medium text-destructive">{error}</p>
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <span className="flex items-center gap-2">
+                  Create Account <UserPlus className="h-4 w-4" />
+                </span>
+              )}
+            </Button>
           </form>
 
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center"></div>
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border/50"></span>
+            </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-gray-500">
+              <span className="bg-card px-2 text-muted-foreground">
                 Or continue with
               </span>
             </div>
@@ -142,7 +165,7 @@ export function SignUpForm({
           <Button
             variant="outline"
             type="button"
-            className="w-full flex items-center justify-center gap-2 py-6 border-gray-200 text-gray-700 "
+            className="w-full h-11 flex items-center justify-center gap-2 border-border/50 bg-background/50 hover:bg-accent transition-all duration-300"
             onClick={handleGoogleLogin}
           >
             <svg
@@ -171,9 +194,14 @@ export function SignUpForm({
             Continue with Google
           </Button>
 
-          <div className="mt-6 text-center text-sm">
-            Already have an account?{" "}
-            <Link href="/auth/login" className="underline underline-offset-4">
+          <div className="mt-8 text-center text-sm">
+            <span className="text-muted-foreground">
+              Already have an account?{" "}
+            </span>
+            <Link
+              href="/auth/login"
+              className="font-semibold text-primary hover:underline underline-offset-4"
+            >
               Login
             </Link>
           </div>

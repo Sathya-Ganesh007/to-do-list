@@ -1,8 +1,14 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Zap, ArrowRight } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 
-export function HeroSection() {
+export async function HeroSection() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <section className="flex-1 flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto max-w-4xl text-center">
@@ -19,13 +25,18 @@ export function HeroSection() {
           and accomplish your goals with ease.
         </p>
         <div className="flex flex-col text-align-center sm:flex-row gap-4 justify-center">
-          <Button asChild size="lg" className="text-base">
-            <Link href="/auth/sign-up">
-              Get Started Free
+          <Button asChild size="lg" className="text-base px-8 h-12">
+            <Link href={user ? "/dashboard" : "/auth/sign-up"}>
+              {user ? "Go to Dashboard" : "Get Started Free"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="text-base">
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="text-base px-8 h-12"
+          >
             <Link href="#features">Learn More</Link>
           </Button>
         </div>

@@ -1,10 +1,10 @@
-import { NavbarSection } from "@/components/Home-page/navbar-section";
-import { HeroSection } from "@/components/Home-page/hero-section";
-import { FeaturesSection } from "@/components/Home-page/features-section";
-import { TestimonialsSection } from "@/components/Home-page/testimonials-section";
-import { Pricing } from "@/components/Home-page/pricing";
-import { CTA } from "@/components/Home-page/cta";
-import { Footer } from "@/components/Home-page/footer";
+import { NavbarSection } from "@/components/Home/navbar-section";
+import { HeroSection } from "@/components/Home/hero-section";
+import { FeaturesSection } from "@/components/Home/features-section";
+import { TestimonialsSection } from "@/components/Home/testimonials-section";
+import { Pricing } from "@/components/Home/pricing";
+import { CTA } from "@/components/Home/cta";
+import { Footer } from "@/components/Home/footer";
 
 export default function Home() {
   return (
@@ -16,6 +16,6 @@ export default function Home() {
       <Pricing />
       <CTA />
       <Footer />
-      </div>
+    </div>
   );
 }

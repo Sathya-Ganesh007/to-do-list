@@ -4,7 +4,7 @@ import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Footer } from "@/components/Home-page/footer";
+import { Footer } from "@/components/Home/footer";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -28,7 +28,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {children}
         </div>
 
-        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
+        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-2">
           <Footer />
           <ThemeSwitcher />
         </footer>
