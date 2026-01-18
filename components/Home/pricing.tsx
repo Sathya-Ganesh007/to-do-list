@@ -55,8 +55,8 @@ export function Pricing() {
     },
     {
       name: "Pro",
-      price: "$9",
-      numericPrice: 9,
+      price: "$2",
+      numericPrice: 2,
       description: "For power users and teams",
       features: [
         "Unlimited tasks",
@@ -71,8 +71,8 @@ export function Pricing() {
     },
     {
       name: "Enterprise",
-      price: "$29",
-      numericPrice: 29,
+      price: "$4",
+      numericPrice: 4,
       description: "For large organizations",
       features: [
         "Everything in Pro",
@@ -105,7 +105,7 @@ export function Pricing() {
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-medium">
+                  <span className="bg-primary text-primary-foreground px-3 py-1  text-xs font-medium">
                     Most Popular
                   </span>
                 </div>
