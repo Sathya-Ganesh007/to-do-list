@@ -12,6 +12,8 @@ import { Laptop, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
+import { motion, AnimatePresence } from "framer-motion";
+
 const ThemeSwitcher = () => {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -21,38 +23,52 @@ const ThemeSwitcher = () => {
   }, []);
 
   if (!mounted) {
-    return null;
+    return <div className="h-9 w-9" />; // Placeholder to prevent layout shift
   }
 
-  const ICON_SIZE = 16;
+  const ICON_SIZE = 18;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="outline"
-          size={"sm"}
-          className="gap-2 border-border/60 hover:border-primary/50 transition-colors"
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 -xl hover:bg-white/5 transition-colors relative"
         >
-          {theme === "light" ? (
-            <Sun
-              key="light"
-              size={ICON_SIZE}
-              className={"text-muted-foreground"}
-            />
-          ) : theme === "dark" ? (
-            <Moon
-              key="dark"
-              size={ICON_SIZE}
-              className={"text-muted-foreground"}
-            />
-          ) : (
-            <Laptop
-              key="system"
-              size={ICON_SIZE}
-              className={"text-muted-foreground"}
-            />
-          )}
+          <AnimatePresence mode="wait">
+            {theme === "light" ? (
+              <motion.div
+                key="light"
+                initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+                animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Sun size={ICON_SIZE} className="text-amber-400" />
+              </motion.div>
+            ) : theme === "dark" ? (
+              <motion.div
+                key="dark"
+                initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+                animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Moon size={ICON_SIZE} className="text-indigo-400" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="system"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Laptop size={ICON_SIZE} className="text-slate-400" />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40" align="end">

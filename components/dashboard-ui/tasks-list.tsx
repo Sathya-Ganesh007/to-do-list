@@ -325,49 +325,49 @@ export default function TasksList({ user }: { user: any }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-3 md:p-8 font-sans">
-      <div className="max-w-6xl mx-auto space-y-10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex flex-col md:flex-row md:items-center gap-6">
-            <div className="relative h-16 w-16 group/progress">
+    <div className="w-full text-white font-sans overflow-x-hidden">
+      <div className="space-y-6 md:space-y-10">
+        <div className="flex flex-col gap-8 md:flex-row md:items-center justify-between">
+          <div className="flex items-center gap-5 md:gap-8">
+            <div className="relative h-14 w-14 md:h-20 md:w-20 group/progress shrink-0">
               {/* Background Glow */}
               <div className="absolute inset-0 bg-indigo-500/10 blur-xl rounded-full opacity-0 group-hover/progress:opacity-100 transition-opacity" />
 
-              <svg className="h-16 w-16 -rotate-90 relative z-10">
+              <svg className="h-14 w-14 md:h-16 md:w-16 -rotate-90 relative z-10">
                 <circle
-                  cx="32"
-                  cy="32"
-                  r="28"
+                  cx="50%"
+                  cy="50%"
+                  r="24"
                   stroke="currentColor"
-                  strokeWidth="5"
+                  strokeWidth="4"
                   fill="transparent"
-                  className="text-white/5"
+                  className="text-white/5 md:r-[28]"
                 />
                 <motion.circle
-                  cx="32"
-                  cy="32"
-                  r="28"
+                  cx="50%"
+                  cy="50%"
+                  r="24"
                   stroke="currentColor"
-                  strokeWidth="5"
+                  strokeWidth="4"
                   fill="transparent"
-                  strokeDasharray="175.9"
-                  initial={{ strokeDashoffset: 175.9 }}
+                  strokeDasharray="150.8"
+                  initial={{ strokeDashoffset: 150.8 }}
                   animate={{
                     strokeDashoffset:
-                      175.9 - 175.9 * (counts.done / (tasks.length || 1)),
+                      150.8 - 150.8 * (counts.done / (tasks.length || 1)),
                   }}
                   className={`${
                     counts.done === tasks.length && tasks.length > 0
                       ? "text-emerald-500"
                       : "text-indigo-500"
-                  }`}
+                  } md:r-[28] md:strokeDasharray-[175.9]`}
                   strokeLinecap="round"
                   style={{ filter: "drop-shadow(0 0 4px currentColor)" }}
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center relative z-10">
                 <span
-                  className={`text-[13px] font-black transition-colors ${
+                  className={`text-[11px] md:text-[13px] font-black transition-colors ${
                     counts.done === tasks.length && tasks.length > 0
                       ? "text-emerald-400"
                       : "text-white"
@@ -385,24 +385,24 @@ export default function TasksList({ user }: { user: any }) {
                   Dashboard
                 </span>
               </h1>
-              <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-wider">
-                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 -full border border-emerald-500/20">
-                  <Check className="h-3 w-3" /> {counts.done} Done
+              <div className="flex items-center gap-2 md:gap-3 text-[9px] md:text-[10px] font-black uppercase tracking-wider">
+                <div className="flex items-center gap-1 px-2 py-1 bg-emerald-500/10 text-emerald-400 -full border border-emerald-500/20 whitespace-nowrap">
+                  <Check className="h-2.5 w-2.5" /> {counts.done} Done
                 </div>
-                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/10 text-amber-400 -full border border-amber-500/20">
-                  <History className="h-3 w-3" /> {counts.pending} Pending
+                <div className="flex items-center gap-1 px-2 py-1 bg-amber-500/10 text-amber-400 -full border border-amber-500/20 whitespace-nowrap">
+                  <History className="h-2.5 w-2.5" /> {counts.pending} Pending
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="relative md:w-64">
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <div className="relative flex-1 md:w-64">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600" />
               <Input
                 ref={searchRef}
                 placeholder="Search tasks... (/)"
-                className="bg-[#121212] border-white/5 pl-11 h-11 -xl focus:ring-indigo-500/20 text-sm"
+                className="bg-[#121212] border-white/5 pl-11 h-11 -xl focus:ring-indigo-500/20 text-xs md:text-sm w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -427,7 +427,7 @@ export default function TasksList({ user }: { user: any }) {
             <Plus className="h-4 w-4 text-gray-500 group-focus-within:text-indigo-500 transition-colors" />
           </div>
           <Input
-            placeholder="Quick add task and press Enter..."
+            placeholder="Quick add task..."
             value={quickAddTitle}
             onChange={(e) => setQuickAddTitle(e.target.value)}
             onKeyDown={(e) => {
@@ -436,24 +436,24 @@ export default function TasksList({ user }: { user: any }) {
                 setQuickAddTitle("");
               }
             }}
-            className="h-11 pl-12 bg-[#121212]/50 border-white/5 -xl text-sm focus:bg-[#161616] focus:border-indigo-500/30 transition-all"
+            className="h-12 pl-12 bg-[#121212]/50 border-white/5 -xl text-sm focus:bg-[#161616] focus:border-indigo-500/30 transition-all shadow-sm"
           />
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-between py-6 border-b border-white/5 gap-6">
           <div className="flex items-center gap-3">
-            <div className="flex p-1.5 bg-[#121212] -2xl border border-white/5">
+            <div className="flex p-1 bg-[#121212] -xl border border-white/5 w-full md:w-auto overflow-x-auto scrollbar-hide no-scrollbar">
               {(["all", "active", "completed"] as const).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className={`px-6 py-2.5 -xl text-sm font-bold transition-all ${
+                  className={`flex-1 md:flex-none px-4 md:px-8 py-2.5 -lg text-[11px] md:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                     filter === f
                       ? "bg-[#1d1d1d] text-white shadow-lg"
                       : "text-gray-500 hover:text-gray-300"
                   }`}
                 >
-                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                  {f}
                 </button>
               ))}
             </div>
@@ -623,10 +623,12 @@ export default function TasksList({ user }: { user: any }) {
                         layout
                         key={t.id}
                         onClick={() => setEditingTask(t)}
-                        className={`group relative overflow-hidden flex items-center justify-between py-4 px-6 bg-[#121212] -xl border border-white/5 transition-all hover:bg-[#161616] hover:border-white/10 cursor-pointer active:scale-[0.99] ${
-                          t.completed ? "opacity-50" : ""
+                        className={`group relative overflow-hidden flex items-center justify-between py-5 px-5 md:px-8 bg-[#121212]/80 backdrop-blur-sm -2xl border border-white/5 transition-all hover:bg-[#161616] hover:border-white/10 hover:shadow-2xl hover:shadow-indigo-500/5 cursor-pointer active:scale-[0.99] ${
+                          t.completed ? "opacity-40 grayscale-[0.5]" : ""
                         }`}
                       >
+                        {/* Background Hover Glow */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         {/* Priority Border Indicator */}
                         <div
                           className={`absolute left-0 top-3 bottom-3 w-1 -full ${
@@ -639,13 +641,16 @@ export default function TasksList({ user }: { user: any }) {
                         />
 
                         <div className="flex items-center gap-5 flex-1 min-w-0">
-                          <div onClick={(e) => e.stopPropagation()}>
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="shrink-0"
+                          >
                             <Checkbox
                               checked={t.completed}
                               onCheckedChange={() =>
                                 handleAction("toggle", t.id)
                               }
-                              className="h-6 w-6 -full data-[state=checked]:bg-emerald-500 transition-all"
+                              className="h-5 w-5 md:h-6 md:w-6 -full data-[state=checked]:bg-emerald-500 transition-all"
                             />
                           </div>
                           <div className="min-w-0">
@@ -677,9 +682,9 @@ export default function TasksList({ user }: { user: any }) {
                                       repeat: Infinity,
                                       duration: 2,
                                     }}
-                                    className="flex items-center gap-1 text-[9px] font-black text-amber-500 uppercase tracking-tight ml-2"
+                                    className="flex items-center gap-1 text-[8px] md:text-[9px] font-black text-amber-500 uppercase tracking-tight ml-0 md:ml-2 mt-1 md:mt-0"
                                   >
-                                    <Bell className="h-3 w-3 fill-amber-500/20" />{" "}
+                                    <Bell className="h-2.5 w-2.5 md:h-3 md:w-3 fill-amber-500/20" />{" "}
                                     Due Today
                                   </motion.div>
                                 )}
@@ -688,7 +693,7 @@ export default function TasksList({ user }: { user: any }) {
                         </div>
 
                         <div
-                          className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0"
+                          className="flex gap-1 md:gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform translate-x-0 md:translate-x-4 md:group-hover:translate-x-0 shrink-0"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Button
@@ -740,7 +745,7 @@ export default function TasksList({ user }: { user: any }) {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#1a1a1a] border border-white/10 px-6 py-4 -2xl shadow-2xl flex items-center gap-6 z-50 min-w-[320px]"
+            className="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 bg-[#1a1a1a] border border-white/10 px-4 md:px-6 py-3 md:py-4 -xl md:-2xl shadow-2xl flex items-center gap-4 md:gap-6 z-50 w-[90%] md:w-auto min-w-[280px] md:min-w-[320px]"
           >
             <span className="text-sm font-medium">Task marked as done</span>
             <Button
@@ -860,28 +865,41 @@ export default function TasksList({ user }: { user: any }) {
                   </div>
                 </div>
 
-                <Button
-                  className="w-full h-12 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm -xl mt-4"
-                  onClick={async () => {
-                    const supabase = createClient();
-                    setTasks(
-                      tasks.map((t) =>
-                        t.id === editingTask.id ? editingTask : t,
-                      ),
-                    );
-                    await supabase
-                      .from("tasks")
-                      .update({
-                        title: editingTask.title,
-                        description: editingTask.description,
-                        priority: editingTask.priority,
-                      })
-                      .eq("id", editingTask.id);
-                    setEditingTask(null);
-                  }}
-                >
-                  Save Changes
-                </Button>
+                <div className="flex gap-3 mt-4">
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-12 border-rose-500/20 bg-rose-500/5 text-rose-500 hover:bg-rose-500/10 font-bold text-sm -xl"
+                    onClick={async () => {
+                      if (!confirm("Delete this task?")) return;
+                      await handleAction("delete", editingTask.id);
+                      setEditingTask(null);
+                    }}
+                  >
+                    Delete Task
+                  </Button>
+                  <Button
+                    className="flex-[2] h-12 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm -xl"
+                    onClick={async () => {
+                      const supabase = createClient();
+                      setTasks(
+                        tasks.map((t) =>
+                          t.id === editingTask.id ? editingTask : t,
+                        ),
+                      );
+                      await supabase
+                        .from("tasks")
+                        .update({
+                          title: editingTask.title,
+                          description: editingTask.description,
+                          priority: editingTask.priority,
+                        })
+                        .eq("id", editingTask.id);
+                      setEditingTask(null);
+                    }}
+                  >
+                    Save Changes
+                  </Button>
+                </div>
               </div>
             </motion.div>
           </>

@@ -1,44 +1,24 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { AuthButton } from "@/components/auth-button";
 import { Suspense } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { NavbarClient } from "./navbar-client";
 
 export function NavbarSection() {
   return (
-    <nav className="w-full border-b border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="w-full border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-50">
+      <div className="w-full max-w-5xl mx-auto px-8 md:px-12">
         <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-6 w-6 text-primary" />
-            <Link href="/" className="text-xl font-bold">
-              TodoList
-            </Link>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-6">
-              <Link
-                href="#features"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Features
-              </Link>
-              <Link
-                href="#testimonials"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Testimonials
-              </Link>
-              <Link
-                href="#pricing"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Pricing
-              </Link>
-            </div>
+          <NavbarClient />
+
+          {/* Actions area */}
+          <div className="flex items-center gap-2 md:gap-4 border-l border-border/40 pl-4 md:pl-8">
             <ThemeSwitcher />
-            <Suspense fallback={<div className="h-9 w-20" />}>
+            <div className="h-4 w-px bg-border/40 mx-1 md:mx-2" />
+            <Suspense
+              fallback={
+                <div className="h-9 w-20 bg-muted/20 animate-pulse rounded-xl" />
+              }
+            >
               <AuthButton />
             </Suspense>
           </div>

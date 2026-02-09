@@ -24,7 +24,7 @@ export function ComingSoonComponent() {
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter">
+          <h1 className="text-5xl md:text-8xl font-black tracking-tighter">
             Coming{" "}
             <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
               Soon
