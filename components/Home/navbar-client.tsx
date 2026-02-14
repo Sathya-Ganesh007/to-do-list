@@ -1,16 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import {
-  CheckCircle2,
-  LayoutDashboard,
-  ListTodo,
-  Settings,
-} from "lucide-react";
-import { usePathname } from "next/navigation";
+import { CheckCircle2, LayoutDashboard, ListTodo } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export function NavbarClient() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const isDashboard = pathname?.startsWith("/dashboard");
   const isAuth = pathname?.startsWith("/auth");
 
@@ -33,7 +29,7 @@ export function NavbarClient() {
             <Link
               href="/dashboard"
               className={`text-sm font-semibold transition-colors flex items-center gap-2 ${
-                pathname === "/dashboard"
+                pathname === "/dashboard" && !searchParams?.get("view")
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
               }`}
@@ -44,20 +40,13 @@ export function NavbarClient() {
             <Link
               href="/dashboard?view=tasks"
               className={`text-sm font-semibold transition-colors flex items-center gap-2 ${
-                pathname?.includes("view=tasks")
+                searchParams?.get("view") === "tasks"
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <ListTodo className="h-4 w-4" />
               Tasks
-            </Link>
-            <Link
-              href="/coming-soon"
-              className="text-sm font-semibold hover:text-foreground transition-colors text-muted-foreground flex items-center gap-2"
-            >
-              <Settings className="h-4 w-4" />
-              Settings
             </Link>
           </>
         ) : !isAuth ? (
