@@ -8,7 +8,9 @@ export function NavbarSection() {
     <nav className="w-full border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-50">
       <div className="w-full max-w-5xl mx-auto px-8 md:px-12">
         <div className="flex h-16 items-center justify-between">
-          <NavbarClient />
+          <Suspense fallback={null}>
+            <NavbarClient />
+          </Suspense>
 
           {/* Actions area */}
           <div className="flex items-center gap-2 md:gap-4 border-l border-border/40 pl-4 md:pl-8">
